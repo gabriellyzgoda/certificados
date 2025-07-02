@@ -33,21 +33,74 @@ function downloadCertificate() {
         return;
     }
     
-    // Usar html2canvas para capturar o certificado
+    // Temporariamente remover o transform scale para captura em tamanho real
+    const originalTransform = certificate.style.transform;
+    certificate.style.transform = 'scale(1)';
+    certificate.style.transformOrigin = 'top left';
+    
+    // Usar html2canvas para capturar o certificado em alta resolução
     html2canvas(certificate, {
-        scale: 2,
+        scale: 3, // Alta resolução
         backgroundColor: '#ffffff',
         width: 800,
         height: 600,
         useCORS: true,
         allowTaint: true
     }).then(canvas => {
-        const link = document.createElement('a');
+        // Restaurar o transform original
+        certificate.style.transform = originalTransform;
+        certificate.style.transformOrigin = 'top center';
+        
         const participantName = document.getElementById('participantName').value || 'participante';
+        
+        // Tentar gerar PDF se jsPDF estiver disponível
+        if (typeof window.jsPDF !== 'undefined') {
+            try {
+                // Criar PDF no formato A4 landscape
+                const { jsPDF } = window.jsPDF;
+                const pdf = new jsPDF({
+                    orientation: 'landscape',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+                
+                // Dimensões do PDF A4 landscape: 297mm x 210mm
+                const pdfWidth = 297;
+                const pdfHeight = 210;
+                
+                // Calcular dimensões para ocupar toda a página
+                const imgWidth = canvas.width;
+                const imgHeight = canvas.height;
+                const ratio = Math.min(pdfWidth / (imgWidth * 0.264583), pdfHeight / (imgHeight * 0.264583));
+                
+                const finalWidth = imgWidth * 0.264583 * ratio;
+                const finalHeight = imgHeight * 0.264583 * ratio;
+                
+                // Centralizar na página
+                const x = (pdfWidth - finalWidth) / 2;
+                const y = (pdfHeight - finalHeight) / 2;
+                
+                // Adicionar a imagem ao PDF
+                pdf.addImage(canvas.toDataURL('image/jpeg', 1.0), 'JPEG', x, y, finalWidth, finalHeight);
+                
+                // Baixar o PDF
+                pdf.save(`certificado_${participantName.replace(/\s+/g, '_')}.pdf`);
+                return;
+            } catch (error) {
+                console.warn('Erro ao gerar PDF, baixando como PNG:', error);
+            }
+        }
+        
+        // Fallback: baixar como PNG em alta qualidade se PDF não funcionar
+        const link = document.createElement('a');
         link.download = `certificado_${participantName.replace(/\s+/g, '_')}.png`;
-        link.href = canvas.toDataURL('image/png');
+        link.href = canvas.toDataURL('image/png', 1.0);
         link.click();
+        
     }).catch(error => {
+        // Restaurar o transform original em caso de erro
+        certificate.style.transform = originalTransform;
+        certificate.style.transformOrigin = 'top center';
         console.error('Erro ao gerar certificado:', error);
         alert('Erro ao gerar certificado. Tente novamente.');
     });
