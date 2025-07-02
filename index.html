@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Certificados</title>
+    <link rel="stylesheet" type="text/css" href="style.css" media="screen" />
+</head>
+<body>
+    <div class="container">
+        <div class="form-panel">
+            <h2>Dados do Certificado</h2>
+            
+            <div class="form-group">
+                <label for="participantName">Nome do Participante:</label>
+                <input type="text" id="participantName" placeholder="Digite o nome completo">
+            </div>
+
+            <div class="form-group">
+                <label for="instructor">Instrutor/Responsável:</label>
+                <input type="text" id="instructor" placeholder="Nome do instrutor">
+            </div>
+
+            <div class="form-group">
+                <label for="institution">Instituição:</label>
+                <input type="text" id="institution" placeholder="Nome da instituição">
+            </div>
+
+            <div class="form-group">
+                <label for="certificateDate">Data de Emissão:</label>
+                <input type="date" id="certificateDate">
+            </div>
+
+            <button class="btn" onclick="updateCertificate()">Atualizar Pré-visualização</button>
+        </div>
+
+        <div class="certificate-panel">
+            <h2>Pré-visualização</h2>
+            
+            <div class="certificate" id="certificate">
+                <div class="decorative-element top-left">★</div>
+                <div class="decorative-element top-right">★</div>
+                <div class="decorative-element bottom-left">★</div>
+                <div class="decorative-element bottom-right">★</div>
+
+                <div class="certificate-header">
+                    <div class="certificate-title">CERTIFICADO</div>
+                    <div class="certificate-subtitle">de conclusão</div>
+                </div>
+
+                <div class="certificate-content">
+                    <div class="certificate-text">
+                        Certificamos que
+                    </div>
+                    
+                    <div class="participant-name" id="displayName">
+                        [Nome do Participante]
+                    </div>
+
+                    <div class="certificate-text" id="displayDescription">
+                        concluiu com aproveitamento o curso de <strong id="displayCourse">Educação Especial</strong>
+                        com carga horária de <strong id="displayWorkload">40 horas</strong>.
+                    </div>
+                </div>
+
+                <div class="certificate-footer">
+                    <div class="signature-area">
+                        <div class="signature-line"></div>
+                        <div class="signature-text" id="displayInstructor">[Instrutor]</div>
+                    </div>
+                    <div class="signature-area">
+                        <div class="signature-line"></div>
+                        <div class="signature-text" id="displayInstitution">[Instituição]</div>
+                    </div>
+                </div>
+
+                <div class="certificate-date" id="displayDate">
+                    Data: [Data de Emissão]
+                </div>
+            </div>
+
+            <div class="download-area">
+                <button class="btn btn-download" onclick="downloadCertificate()">
+                    Baixar Certificado (PNG)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+    <!-- Biblioteca html2canvas para captura de tela -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</body>
+</html>
